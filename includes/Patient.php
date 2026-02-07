@@ -164,7 +164,7 @@ class Patient {
      */
     public function getRecentPatients($limit = 10) {
         try {
-            $sql = "SELECT id, nome_cognome, data_nascita, telefono,
+            $sql = "SELECT id, nome_cognome, data_nascita, telefono, email,
                            YEAR(CURDATE()) - YEAR(data_nascita) AS eta,
                            data_creazione
                     FROM pazienti 
