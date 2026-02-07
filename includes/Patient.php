@@ -42,7 +42,7 @@ class Patient {
      */
     public function getPatient($id) {
         try {
-            $sql = "SELECT *, YEAR(CURDATE()) - YEAR(data_nascita) AS eta 
+            $sql = "SELECT *, TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta 
                     FROM pazienti WHERE id = :id";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([':id' => $id]);
@@ -103,7 +103,7 @@ class Patient {
     public function getAllPatients($limit = 100, $offset = 0) {
         try {
             $sql = "SELECT id, nome_cognome, data_nascita, telefono, email, 
-                           YEAR(CURDATE()) - YEAR(data_nascita) AS eta,
+                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta,
                            data_creazione
                     FROM pazienti 
                     ORDER BY nome_cognome ASC
@@ -126,7 +126,7 @@ class Patient {
     public function searchPatients($query) {
         try {
             $sql = "SELECT id, nome_cognome, data_nascita, telefono, email,
-                           YEAR(CURDATE()) - YEAR(data_nascita) AS eta
+                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta
                     FROM pazienti 
                     WHERE nome_cognome LIKE :query 
                        OR telefono LIKE :query
@@ -165,7 +165,7 @@ class Patient {
     public function getRecentPatients($limit = 10) {
         try {
             $sql = "SELECT id, nome_cognome, data_nascita, telefono, email,
-                           YEAR(CURDATE()) - YEAR(data_nascita) AS eta,
+                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta,
                            data_creazione
                     FROM pazienti 
                     ORDER BY data_creazione DESC
