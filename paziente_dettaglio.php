@@ -38,14 +38,14 @@ $totalPrescriptions = count($prescriptions);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($patient['nome_cognome']) ?> - Gestionale Naturologa</title>
+    <title><?= htmlspecialchars($patient['nome_cognome']) ?> - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
                 <a href="paziente_nuovo.php">Nuovo Paziente</a>
@@ -58,15 +58,12 @@ $totalPrescriptions = count($prescriptions);
     <div class="container">
         <!-- Patient Info Card -->
         <div class="card">
-            <div class="flex-between flex-center" style="margin-bottom: 20px;">
-                <h2 class="card-header" style="margin-bottom: 0;">
-                    👤 <?= htmlspecialchars($patient['nome_cognome']) ?>
-                </h2>
-                <div class="flex gap-10">
-                    <button onclick="toggleEditMode()" class="btn btn-secondary btn-small">✏️ Modifica</button>
-                    <a href="prescrizioni_gestione.php?paziente_id=<?= $patientId ?>" class="btn btn-outline btn-small">💊 Prescrizioni</a>
-                    <a href="alimenti_gestione.php?paziente_id=<?= $patientId ?>" class="btn btn-outline btn-small">🍎 Alimenti</a>
-                    <a href="export_pdf.php?type=patient&id=<?= $patientId ?>" target="_blank" class="btn btn-primary btn-small">📄 PDF</a>
+            <div class="flex-between flex-center">
+                <h2 class="card-header">Scheda Paziente</h2>
+                <div class="action-buttons">
+                    <a href="prescrizioni_gestione.php?paziente_id=<?= $patientId ?>" class="btn btn-outline btn-small">Prescrizioni</a>
+                    <a href="alimenti_gestione.php?paziente_id=<?= $patientId ?>" class="btn btn-outline btn-small">Alimenti</a>
+                    <a href="export_pdf.php?type=patient&id=<?= $patientId ?>" target="_blank" class="btn btn-primary btn-small">PDF</a>
                 </div>
             </div>
 

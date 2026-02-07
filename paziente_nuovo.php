@@ -8,14 +8,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuovo Paziente - Gestionale Naturologa</title>
+    <title>Nuovo Paziente - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
                 <a href="paziente_nuovo.php">Nuovo Paziente</a>
@@ -27,7 +27,7 @@
     <!-- Main Content -->
     <div class="container">
         <div class="card">
-            <h2 class="card-header">➕ Aggiungi Nuovo Paziente</h2>
+            <h2 class="card-header">Nuovo Paziente</h2>
             
             <form id="patient-form" method="POST">
                 <div class="form-group">
@@ -98,8 +98,8 @@
                     >
                 </div>
 
-                <div class="flex gap-10 mt-20">
-                    <button type="submit" class="btn btn-primary">💾 Salva Paziente</button>
+                <div class="form-row" style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Salva Paziente</button>
                     <a href="index.php" class="btn btn-outline">↶ Annulla</a>
                 </div>
             </form>

@@ -33,18 +33,18 @@ $activePrescriptions = array_filter($prescriptions, fn($p) => $p['attivo']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prescrizioni - <?= htmlspecialchars($patient['nome_cognome']) ?></title>
+    <title>Prescrizioni - <?= htmlspecialchars($patient['nome_cognome']) ?> - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
-                <a href="paziente_dettaglio.php?id=<?= $patientId ?>">Paziente</a>
                 <a href="medicinali_gestione.php">Medicinali</a>
+                <a href="paziente_dettaglio.php?id=<?= $patientId ?>">← Torna al Paziente</a>
             </nav>
         </div>
     </header>
@@ -53,10 +53,9 @@ $activePrescriptions = array_filter($prescriptions, fn($p) => $p['attivo']);
     <div class="container">
         <!-- Patient Info -->
         <div class="card">
-            <h2 class="card-header">💊 Prescrizioni - <?= htmlspecialchars($patient['nome_cognome']) ?></h2>
-            <div class="flex gap-10">
-                <a href="paziente_dettaglio.php?id=<?= $patientId ?>" class="btn btn-outline">← Torna al Paziente</a>
-                <a href="export_pdf.php?type=prescriptions&patient_id=<?= $patientId ?>" target="_blank" class="btn btn-secondary">📄 Esporta PDF</a>
+            <div class="flex-between flex-center">
+                <h2 class="card-header" style="margin-bottom: 0;">Prescrizioni: <?= htmlspecialchars($patient['nome_cognome']) ?></h2>
+                <a href="export_pdf.php?type=prescriptions&patient_id=<?= $patientId ?>" target="_blank" class="btn btn-outline btn-small">Stampa Piano</a>
             </div>
         </div>
 

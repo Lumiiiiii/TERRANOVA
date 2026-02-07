@@ -14,14 +14,14 @@ $totalPatients = $patientManager->countPatients();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionale Naturologa - Home</title>
+    <title>TerraNova - Gestionale Naturopatia</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
                 <a href="paziente_nuovo.php">Nuovo Paziente</a>
@@ -39,7 +39,7 @@ $totalPatients = $patientManager->countPatients();
                     <h2 class="card-header" style="margin-bottom: 10px;">Dashboard</h2>
                     <p style="color: var(--text-light);">Totale pazienti registrati: <strong><?= $totalPatients ?></strong></p>
                 </div>
-                <a href="paziente_nuovo.php" class="btn btn-primary">➕ Aggiungi Paziente</a>
+                <a href="paziente_nuovo.php" class="btn btn-primary">Aggiungi Paziente</a>
             </div>
         </div>
 
@@ -64,7 +64,7 @@ $totalPatients = $patientManager->countPatients();
             <div id="patients-list">
                 <?php if (empty($recentPatients)): ?>
                     <div class="empty-state">
-                        <div class="empty-state-icon">👤</div>
+                        <div class="empty-state-icon">User</div>
                         <p>Nessun paziente registrato</p>
                         <p style="margin-top: 20px;">
                             <a href="paziente_nuovo.php" class="btn btn-primary">Aggiungi il primo paziente</a>

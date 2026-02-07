@@ -101,7 +101,7 @@ function displayPatients(patients) {
     if (patients.length === 0) {
         listContainer.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state-icon">👤</div>
+                <div class="empty-state-icon">User</div>
                 <p>Nessun paziente trovato</p>
             </div>
         `;

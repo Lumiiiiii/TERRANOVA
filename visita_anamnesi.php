@@ -40,16 +40,17 @@ $existingAnamnesis = $anamnesisManager->getAnamnesis($visitaId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anamnesi - <?= htmlspecialchars($patient['nome_cognome']) ?></title>
+    <title>Anamnesi Visita - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
+                <a href="medicinali_gestione.php">Medicinali</a>
                 <a href="paziente_dettaglio.php?id=<?= $pazienteId ?>">← Torna al Paziente</a>
             </nav>
         </div>
@@ -58,7 +59,7 @@ $existingAnamnesis = $anamnesisManager->getAnamnesis($visitaId);
     <!-- Main Content -->
     <div class="container">
         <div class="card">
-            <h2 class="card-header">📋 Scheda Anamnestica e Stile di Vita</h2>
+            <h2 class="card-header">Scheda Anamnestica e Stile di Vita</h2>
             
             <!-- Patient Info -->
             <div style="background: var(--primary-light); padding: 15px; border-radius: 8px; margin-bottom: 30px;">
@@ -333,9 +334,9 @@ $existingAnamnesis = $anamnesisManager->getAnamnesis($visitaId);
                     <textarea name="osservazioni_finali" class="form-textarea" rows="6" placeholder="Note della naturologa..."><?= htmlspecialchars($existingAnamnesis['osservazioni_finali'] ?? '') ?></textarea>
                 </div>
 
-                <!-- Submit Buttons -->
-                <div class="flex gap-10 mt-20">
-                    <button type="submit" class="btn btn-primary">💾 Salva Anamnesi</button>
+                <div class="form-row" style="margin-top: 30px;">
+                <div class="flex gap-10">
+                    <button type="submit" class="btn btn-primary">Salva Anamnesi</button>
                     <a href="paziente_dettaglio.php?id=<?= $pazienteId ?>" class="btn btn-outline">↶ Annulla</a>
                 </div>
             </form>

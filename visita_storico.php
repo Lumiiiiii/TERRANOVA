@@ -30,14 +30,14 @@ $anamnesis = $anamnesisManager->getAnamnesis($visitaId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visita del <?= date('d/m/Y', strtotime($visit['data_visita'])) ?> - <?= htmlspecialchars($visit['nome_cognome']) ?></title>
+    <title>Visita del <?= date('d/m/Y', strtotime($visit['data_visita'])) ?> - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
                 <a href="medicinali_gestione.php">Medicinali</a>
@@ -50,8 +50,8 @@ $anamnesis = $anamnesisManager->getAnamnesis($visitaId);
     <div class="container">
         <div class="card">
             <div class="flex-between flex-center" style="margin-bottom: 20px;">
-                <h2 class="card-header" style="margin-bottom: 0;">📋 Dettaglio Visita</h2>
-                <a href="export_pdf.php?type=visit&id=<?= $visitaId ?>" target="_blank" class="btn btn-primary btn-small">📄 Esporta PDF</a>
+                <h2 class="card-header" style="margin-bottom: 0;">Dettaglio Visita</h2>
+                <a href="export_pdf.php?type=visit&id=<?= $visitaId ?>" target="_blank" class="btn btn-primary btn-small">Esporta PDF</a>
             </div>
             
             <div style="background: var(--primary-light); padding: 15px; border-radius: 8px; margin-bottom: 30px;">

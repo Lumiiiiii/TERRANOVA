@@ -7,18 +7,21 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/Patient.php';
 require_once __DIR__ . '/Visit.php';
+require_once __DIR__ . '/Anamnesis.php';
 require_once __DIR__ . '/FoodRestrictions.php';
 require_once __DIR__ . '/Prescription.php';
 
 class PDFExporter {
     private $patient;
     private $visit;
+    private $anamnesis;
     private $food;
     private $prescription;
     
     public function __construct() {
         $this->patient = new Patient();
         $this->visit = new Visit();
+        $this->anamnesis = new Anamnesis();
         $this->food = new FoodRestrictions();
         $this->prescription = new Prescription();
     }
@@ -170,10 +173,10 @@ class PDFExporter {
     </style>
 </head>
 <body>
-    <button class="print-button no-print" onclick="window.print()">🖨️ Stampa / Salva PDF</button>
+    <button class="print-button no-print" onclick="window.print()">Stampa / Salva PDF</button>
     {$content}
     <div class="footer">
-        <p>Documento generato il {$this->formatDate(date('Y-m-d'))} - 🌿 Gestionale Naturologa</p>
+        <p>Documento generato il {$this->formatDate(date('Y-m-d'))} - TerraNova Gestionale</p>
     </div>
     <script>
         // Auto-apri dialogo di stampa se richiesto
@@ -211,7 +214,7 @@ HTML;
         $foodRestrictions = $this->food->getFoodRestrictionsByCategory($patientId);
         
         $content = '<div class="header">';
-        $content .= '<h1>🌿 Report Paziente</h1>';
+        $content .= '<h1>Report Paziente</h1>';
         $content .= '<p><strong>' . htmlspecialchars($patient['nome_cognome']) . '</strong></p>';
         $content .= '</div>';
         
@@ -281,7 +284,7 @@ HTML;
             foreach ($foodRestrictions as $foods) {
                 $totalFoods += count($foods);
             }
-            $content .= '<div class="section-title">🍎 Alimenti da Evitare (' . $totalFoods . ')</div>';
+            $content .= '<div class="section-title">Alimenti da Evitare (' . $totalFoods . ')</div>';
             foreach ($foodRestrictions as $category => $foods) {
                 if (!empty($foods)) {
                     $content .= '<p><strong>' . htmlspecialchars($category) . ':</strong> ';
@@ -309,7 +312,7 @@ HTML;
         }
         
         $patient = $this->patient->getPatient($visit['paziente_id']);
-        $anamnesis = $this->visit->getAnamnesis($visitId);
+        $anamnesis = $this->anamnesis->getAnamnesis($visitId);
         $prescriptions = $this->prescription->getPrescriptionsByVisit($visitId);
         
         $content = '<div class="header">';
@@ -357,7 +360,7 @@ HTML;
         // Prescrizioni della visita
         if (!empty($prescriptions)) {
             $content .= '<div class="section">';
-            $content .= '<div class="section-title">💊 Prescrizioni (' . count($prescriptions) . ')</div>';
+            $content .= '<div class="section-title">Prescrizioni (' . count($prescriptions) . ')</div>';
             $content .= '<table>';
             $content .= '<tr><th>Medicinale</th><th>Dosaggio</th><th>Frequenza</th><th>Durata</th></tr>';
             foreach ($prescriptions as $pr) {
@@ -390,7 +393,7 @@ HTML;
         $prescriptions = $this->prescription->getPrescriptionsByPatient($patientId, true);
         
         $content = '<div class="header">';
-        $content .= '<h1>💊 Piano Terapeutico</h1>';
+        $content .= '<h1>Piano Terapeutico</h1>';
         $content .= '<p><strong>' . htmlspecialchars($patient['nome_cognome']) . '</strong></p>';
         $content .= '</div>';
         

@@ -14,16 +14,17 @@ $countByType = $medicineManager->countByType();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Medicinali - Gestionale Naturologa</title>
+    <title>Gestione Medicinali - TerraNova</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>🌿 Gestionale Naturologa</h1>
+            <h1>TerraNova - Gestionale Naturopatia</h1>
             <nav class="header-nav">
                 <a href="index.php">Home</a>
+                <a href="paziente_nuovo.php">Nuovo Paziente</a>
                 <a href="medicinali_gestione.php" class="active">Medicinali</a>
             </nav>
         </div>
@@ -33,7 +34,7 @@ $countByType = $medicineManager->countByType();
     <div class="container">
         <!-- Statistiche -->
         <div class="card">
-            <h2 class="card-header">💊 Catalogo Medicinali</h2>
+            <h2 class="card-header">Gestione Medicinali</h2>
             <div class="form-row">
                 <?php foreach ($countByType as $stat): ?>
                     <div class="info-box">
