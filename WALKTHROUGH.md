@@ -20,9 +20,11 @@ I have successfully modernized the TerraNova application with a **2026-style Gla
 | Page | Improvements |
 | :--- | :--- |
 | **Dashboard** (`index.php`) | Bento Grid layout, sticky glass navigation, floating search bar. |
+| **New Patient** (`paziente_nuovo.php`) | Styled form with glass cards and consistent header. |
 | **Anamnesis** (`visita_anamnesi.php`) | Multi-section form with glass cards, sticky "Save" bar, conditional logic preserved. |
 | **Patient Detail** (`paziente_dettaglio.php`) | 3-Column layout (Profile, Prescriptions, Timeline), visual timeline for visits. |
 | **Prescriptions** (`prescrizioni_gestione.php`) | Styled tables, styled "Add Medicine" modal with backdrop blur, responsive lists. |
+| **Medicine Catalog** (`medicinali_gestione.php`) | Modernized table, filters, and "Add Medicine" form. |
 | **Food Restrictions** (`alimenti_gestione.php`) | Modernized list and formatting. |
 
 ### 3. **Technical Updates**
@@ -34,8 +36,9 @@ I have successfully modernized the TerraNova application with a **2026-style Gla
 
 All features form the original implementation plan have been verified:
 - [x] **Patient Search**: Functional and styled.
-- [x] **New Patient**: Form styled.
+- [x] **New Patient**: Form styled and consistent.
 - [x] **Anamnesis**: Logic and UI verified.
 - [x] **Prescriptions**: "Add Medicine" modal works perfectly with new styles.
+- [x] **Medicine Catalog**: Table and filters styled.
 
 The application is now ready for use with a completely refreshing look!
