@@ -100,8 +100,7 @@ function displayPatients(patients) {
 
     if (patients.length === 0) {
         listContainer.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">User</div>
+            <div class="p-10 text-center text-gray-500">
                 <p>Nessun paziente trovato</p>
             </div>
         `;
@@ -109,18 +108,22 @@ function displayPatients(patients) {
     }
 
     listContainer.innerHTML = patients.map(patient => `
-        <div class="patient-list-item" onclick="window.location.href='paziente_dettaglio.php?id=${patient.id}'">
-            <div class="patient-info">
-                <h3>${patient.nome_cognome}</h3>
-                <p>
-                    ${patient.eta ? `${patient.eta} anni` : ''} 
-                    ${patient.telefono ? `• Tel: ${patient.telefono}` : ''}
-                    ${patient.email ? `• ${patient.email}` : ''}
-                </p>
+        <div class="p-4 hover:bg-white/60 transition-colors cursor-pointer flex justify-between items-center group" 
+             onclick="window.location.href='paziente_dettaglio.php?id=${patient.id}'">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    ${patient.nome_cognome.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800">${patient.nome_cognome}</h4>
+                    <p class="text-xs text-gray-500">
+                        ${patient.eta ? `${patient.eta} anni` : ''} 
+                        ${patient.telefono ? ` • ${patient.telefono}` : ''}
+                        ${patient.email ? ` • ${patient.email}` : ''}
+                    </p>
+                </div>
             </div>
-            <div>
-                <span class="badge badge-info">Visualizza</span>
-            </div>
+            <svg class="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </div>
     `).join('');
 }

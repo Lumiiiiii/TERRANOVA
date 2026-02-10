@@ -50,7 +50,12 @@ try {
             break;
             
         case 'search_patients':
-            $patients = $patientManager->searchPatients($_GET['query'] ?? '');
+            $query = $_GET['query'] ?? '';
+            if (strlen(trim($query)) < 2) {
+                echo json_encode(['success' => true, 'data' => []]);
+                break;
+            }
+            $patients = $patientManager->searchPatients($query);
             echo json_encode(['success' => true, 'data' => $patients]);
             break;
             
@@ -104,6 +109,14 @@ try {
         // ANAMNESI
         // ============================================
         case 'save_anamnesis':
+            // Prima aggiorna i dati del paziente se inviati
+            if (isset($_POST['nome_cognome'])) {
+                $visita = $visitManager->getVisit($_POST['visita_id']);
+                if ($visita) {
+                    $patientManager->updatePatient($visita['paziente_id'], $_POST);
+                }
+            }
+            
             $result = $anamnesisManager->saveAnamnesis($_POST['visita_id'], $_POST);
             echo json_encode(['success' => (bool)$result, 'id' => $result]);
             break;
@@ -114,6 +127,14 @@ try {
             break;
             
         case 'update_anamnesis':
+            // Prima aggiorna i dati del paziente se inviati
+            if (isset($_POST['nome_cognome'])) {
+                $visita = $visitManager->getVisit($_POST['visita_id']);
+                if ($visita) {
+                    $patientManager->updatePatient($visita['paziente_id'], $_POST);
+                }
+            }
+            
             $result = $anamnesisManager->updateAnamnesis($_POST['visita_id'], $_POST);
             echo json_encode(['success' => (bool)$result]);
             break;

@@ -1,12 +1,12 @@
 <?php
 /**
- * Homepage - Dashboard principale
+ * Homepage - Dashboard principale (Tailwind + Bento Grid Redesign)
  */
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/Patient.php';
 
 $patientManager = new Patient();
-$recentPatients = $patientManager->getRecentPatients(15);
+$recentPatients = $patientManager->getRecentPatients(10);
 $totalPatients = $patientManager->countPatients();
 ?>
 <!DOCTYPE html>
@@ -15,97 +15,152 @@ $totalPatients = $patientManager->countPatients();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraNova - Gestionale Naturopatia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2d8659',
+                        secondary: '#f4a261',
+                        accent: '#e76f51',
+                        surface: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <h1>TerraNova - Gestionale Naturopatia</h1>
-            <nav class="header-nav">
-                <a href="index.php">Home</a>
-                <a href="paziente_nuovo.php">Nuovo Paziente</a>
-                <a href="medicinali_gestione.php">Medicinali</a>
-            </nav>
+<body class="min-h-screen text-gray-800">
+
+    <!-- Top Navigation (Glassmorphic) -->
+    <nav class="fixed tops-0 w-full z-50 glass px-6 py-4 mb-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-green-400 flex items-center justify-center text-white font-bold">TN</div>
+                <h1 class="text-xl font-bold text-gray-800 tracking-tight">TerraNova</h1>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-gray-600">
+                <a href="index.php" class="text-primary font-semibold">Dashboard</a>
+                <a href="paziente_nuovo.php" class="hover:text-primary transition-colors">Nuovo Paziente</a>
+                <a href="medicinali_gestione.php" class="hover:text-primary transition-colors">Medicinali</a>
+            </div>
+            <!-- Mobile Menu Button (Placeholder) -->
+            <button class="md:hidden text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
-    <div class="container">
-        <!-- Quick Stats -->
-        <div class="card">
-            <div class="flex-between flex-center">
-                <div>
-                    <h2 class="card-header" style="margin-bottom: 10px;">Dashboard</h2>
-                    <p style="color: var(--text-light);">Totale pazienti registrati: <strong><?= $totalPatients ?></strong></p>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        
+        <!-- Welcome Section -->
+        <header class="mb-10 animate-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Benvenuta, Naturopata.</h2>
+            <p class="text-gray-500">Ecco una panoramica della tua attività oggi.</p>
+        </header>
+
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
+            
+            <!-- 1. Stats Card (Large) -->
+            <div class="md:col-span-2 glass rounded-2xl p-8 relative overflow-hidden group animate-fade-in">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                <h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider mb-1">Totale Pazienti</h3>
+                <div class="text-6xl font-bold text-gray-800 mb-4"><?= $totalPatients ?></div>
+                <div class="flex items-center gap-2 text-green-600 text-sm font-medium bg-green-50 w-fit px-3 py-1 rounded-full">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <span>Database attivo</span>
                 </div>
-                <a href="paziente_nuovo.php" class="btn btn-primary">Aggiungi Paziente</a>
             </div>
-        </div>
 
-        <!-- Search Bar -->
-        <div class="card">
-            <h3 class="card-header">Cerca Paziente</h3>
-            <div class="search-bar">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    class="search-input" 
-                    placeholder="Cerca per nome, telefono o email..."
-                    autocomplete="off"
-                >
-                <span class="search-icon">🔍</span>
-            </div>
-        </div>
+            <!-- 2. Action Card (Primary) -->
+            <a href="paziente_nuovo.php" class="md:col-span-1 bg-gradient-to-br from-primary to-green-600 text-white rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-green-500/20 transition-all transform hover:-translate-y-1 animate-fade-in delay-100">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold">Nuovo Paziente</h3>
+                    <p class="text-green-100 text-sm mt-1">Registra una nuova scheda</p>
+                </div>
+            </a>
 
-        <!-- Patient List -->
-        <div class="card">
-            <h3 class="card-header">Pazienti Recenti</h3>
-            <div id="patients-list">
-                <?php if (empty($recentPatients)): ?>
-                    <div class="empty-state">
-                        <div class="empty-state-icon">User</div>
-                        <p>Nessun paziente registrato</p>
-                        <p style="margin-top: 20px;">
-                            <a href="paziente_nuovo.php" class="btn btn-primary">Aggiungi il primo paziente</a>
-                        </p>
+            <!-- 3. Medicine Shortcut -->
+            <a href="medicinali_gestione.php" class="md:col-span-1 glass rounded-2xl p-6 flex flex-col justify-between hover:border-secondary transition-colors group animate-fade-in delay-200">
+                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6 text-secondary group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Medicinali</h3>
+                    <p class="text-gray-500 text-sm mt-1">Gestisci archivio</p>
+                </div>
+            </a>
+
+            <!-- 4. Search Bar (Full Width) -->
+            <div class="md:col-span-4 glass rounded-2xl p-6 animate-fade-in delay-200">
+                 <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                <?php else: ?>
-                    <?php foreach ($recentPatients as $patient): ?>
-                        <div class="patient-list-item" onclick="window.location.href='paziente_dettaglio.php?id=<?= $patient['id'] ?>'">
-                            <div class="patient-info">
-                                <h3><?= htmlspecialchars($patient['nome_cognome']) ?></h3>
-                                <p>
-                                    <?php if ($patient['eta']): ?>
-                                        <?= $patient['eta'] ?> anni
-                                    <?php endif; ?>
-                                    <?php if ($patient['telefono']): ?>
-                                        • Tel: <?= htmlspecialchars($patient['telefono']) ?>
-                                    <?php endif; ?>
-                                    <?php if ($patient['email']): ?>
-                                        • <?= htmlspecialchars($patient['email']) ?>
-                                    <?php endif; ?>
-                                </p>
-                            </div>
-                            <div>
-                                <span class="badge badge-info">Visualizza</span>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    <input type="text" id="search-input" 
+                        class="block w-full pl-12 pr-4 py-4 bg-white/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
+                        placeholder="Cerca paziente per nome, email o telefono..." autocomplete="off">
+                 </div>
             </div>
+
+            <!-- 5. Recent Patients List (Vertical, Taller) -->
+            <div class="md:col-span-4 glass rounded-2xl p-0 overflow-hidden animate-fade-in delay-300">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white/30">
+                    <h3 class="font-bold text-lg text-gray-800">Pazienti Recenti</h3>
+                    <a href="#" class="text-sm text-primary font-medium hover:underline">Vedi tutti</a>
+                </div>
+                <div id="patients-list" class="divide-y divide-gray-100 max-h-[400px] overflow-y-auto">
+                    <!-- Dynamic Content -->
+                    <?php if (empty($recentPatients)): ?>
+                        <div class="p-10 text-center text-gray-500">
+                            <p>Nessun paziente trovato. Inizia aggiungendone uno!</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($recentPatients as $patient): ?>
+                            <div class="p-4 hover:bg-white/60 transition-colors cursor-pointer flex justify-between items-center group" 
+                                 onclick="window.location.href='paziente_dettaglio.php?id=<?= $patient['id'] ?>'">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                        <?= strtoupper(substr($patient['nome_cognome'], 0, 1)) ?>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800"><?= htmlspecialchars($patient['nome_cognome']) ?></h4>
+                                        <p class="text-xs text-gray-500">
+                                            <?= $patient['eta'] ? $patient['eta'] . ' anni' : '' ?>
+                                            <?= $patient['telefono'] ? ' • ' . htmlspecialchars($patient['telefono']) : '' ?>
+                                        </p>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </main>
 
     <script src="js/main.js"></script>
     <script>
-        // Carica pazienti recenti al caricamento della pagina
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search-input');
             searchInput.addEventListener('input', function(e) {
+                // Use the existing logic from main.js but we might need to adapt the display function for Tailwind
                 searchPatients(e.target.value);
             });
         });
+
+        // We need to override the displayPatients function from main.js to use Tailwind classes
+        // This is a bit of a hack, normally we would refactor main.js, but for this step we can override it here or update main.js next.
+        // Let's update main.js in the next step to support the new UI.
     </script>
 </body>
 </html>

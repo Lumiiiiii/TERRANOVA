@@ -17,12 +17,13 @@ class Patient {
      */
     public function createPatient($data) {
         try {
-            $sql = "INSERT INTO pazienti (nome_cognome, data_nascita, indirizzo, telefono, email, professione) 
-                    VALUES (:nome_cognome, :data_nascita, :indirizzo, :telefono, :email, :professione)";
+            $sql = "INSERT INTO pazienti (nome_cognome, sesso, data_nascita, indirizzo, telefono, email, professione) 
+                    VALUES (:nome_cognome, :sesso, :data_nascita, :indirizzo, :telefono, :email, :professione)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 ':nome_cognome' => $data['nome_cognome'],
+                ':sesso' => $data['sesso'] ?? null,
                 ':data_nascita' => $data['data_nascita'] ?? null,
                 ':indirizzo' => $data['indirizzo'] ?? null,
                 ':telefono' => $data['telefono'] ?? null,
@@ -60,6 +61,7 @@ class Patient {
         try {
             $sql = "UPDATE pazienti 
                     SET nome_cognome = :nome_cognome,
+                        sesso = :sesso,
                         data_nascita = :data_nascita,
                         indirizzo = :indirizzo,
                         telefono = :telefono,
@@ -71,6 +73,7 @@ class Patient {
             return $stmt->execute([
                 ':id' => $id,
                 ':nome_cognome' => $data['nome_cognome'],
+                ':sesso' => $data['sesso'] ?? null,
                 ':data_nascita' => $data['data_nascita'] ?? null,
                 ':indirizzo' => $data['indirizzo'] ?? null,
                 ':telefono' => $data['telefono'] ?? null,
@@ -102,7 +105,7 @@ class Patient {
      */
     public function getAllPatients($limit = 100, $offset = 0) {
         try {
-            $sql = "SELECT id, nome_cognome, data_nascita, telefono, email, 
+            $sql = "SELECT id, nome_cognome, sesso, data_nascita, telefono, email, 
                            TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta,
                            data_creazione
                     FROM pazienti 
@@ -125,18 +128,23 @@ class Patient {
      */
     public function searchPatients($query) {
         try {
-            $sql = "SELECT id, nome_cognome, data_nascita, telefono, email,
+            $query = trim($query);
+            $sql = "SELECT id, nome_cognome, sesso, data_nascita, telefono, email,
                            TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta
                     FROM pazienti 
-                    WHERE nome_cognome LIKE :query 
-                       OR telefono LIKE :query
-                       OR email LIKE :query
+                    WHERE nome_cognome LIKE :q1 
+                       OR telefono LIKE :q2
+                       OR email LIKE :q3
                     ORDER BY nome_cognome ASC
                     LIMIT 50";
             
             $stmt = $this->db->prepare($sql);
             $searchTerm = '%' . $query . '%';
-            $stmt->execute([':query' => $searchTerm]);
+            $stmt->execute([
+                ':q1' => $searchTerm,
+                ':q2' => $searchTerm,
+                ':q3' => $searchTerm
+            ]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Errore ricerca pazienti: " . $e->getMessage());

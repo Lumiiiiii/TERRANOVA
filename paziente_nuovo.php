@@ -30,16 +30,26 @@
             <h2 class="card-header">Nuovo Paziente</h2>
             
             <form id="patient-form" method="POST">
-                <div class="form-group">
-                    <label class="form-label" for="nome_cognome">Nome e Cognome *</label>
-                    <input 
-                        type="text" 
-                        id="nome_cognome" 
-                        name="nome_cognome" 
-                        class="form-input" 
-                        required
-                        placeholder="Es: Mario Rossi"
-                    >
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label class="form-label" for="nome_cognome">Nome e Cognome *</label>
+                        <input 
+                            type="text" 
+                            id="nome_cognome" 
+                            name="nome_cognome" 
+                            class="form-input" 
+                            required
+                            placeholder="Es: Mario Rossi"
+                        >
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label" for="sesso">Sesso</label>
+                        <select id="sesso" name="sesso" class="form-input">
+                            <option value="">Seleziona...</option>
+                            <option value="F">Femmina</option>
+                            <option value="M">Maschio</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-row">
