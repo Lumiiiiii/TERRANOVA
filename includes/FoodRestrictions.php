@@ -1,188 +1,128 @@
 <?php
 /**
- * Classe FoodRestrictions - Gestione alimenti da evitare
+ * Classe FoodRestrictions - Gestione Alimenti da Evitare
  */
-
 require_once __DIR__ . '/../config/database.php';
 
-class FoodRestrictions {
+class FoodRestrictions
+{
     private $db;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->db = getDB();
     }
-    
-    /**
-     * Aggiunge un alimento da evitare per un paziente
-     */
-    public function addFoodRestriction($paziente_id, $categoria, $alimento) {
-        try {
-            $sql = "INSERT INTO alimenti_evitare (paziente_id, categoria, alimento) 
-                    VALUES (:paziente_id, :categoria, :alimento)";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':paziente_id' => $paziente_id,
-                ':categoria' => $categoria,
-                ':alimento' => $alimento
-            ]);
-            
-            return $this->db->lastInsertId();
-        } catch (PDOException $e) {
-            error_log("Errore aggiunta alimento da evitare: " . $e->getMessage());
-            return false;
-        }
+
+    public function getRestrictions($paziente_id)
+    {
+        $sql = "SELECT ae.*, la.nome as alimento_nome, la.categoria 
+                FROM alimenti_evitare ae
+                JOIN lista_alimenti la ON ae.lista_alimenti_id = la.id
+                WHERE ae.paziente_id = ? AND ae.attivo = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$paziente_id]);
+        return $stmt->fetchAll();
     }
-    
-    /**
-     * Ottiene tutti gli alimenti da evitare per un paziente
-     */
-    public function getFoodRestrictions($paziente_id, $only_active = true) {
-        try {
-            $sql = "SELECT * FROM alimenti_evitare 
-                    WHERE paziente_id = :paziente_id";
-            
-            if ($only_active) {
-                $sql .= " AND attivo = 1";
+
+    public function getFoodRestrictionsByCategory($paziente_id)
+    {
+        $restrictions = $this->getRestrictions($paziente_id);
+        $grouped = [];
+        foreach ($restrictions as $r) {
+            $cat = $r['categoria'] ?: 'Altro';
+            $grouped[$cat][] = [
+                'id' => $r['id'],
+                'alimento' => $r['alimento_nome'],
+                'categoria' => $cat
+            ];
+        }
+        return $grouped;
+    }
+
+    public function getAllFoods()
+    {
+        $stmt = $this->db->query("SELECT * FROM lista_alimenti ORDER BY nome");
+        return $stmt->fetchAll();
+    }
+
+    public function getAllCategories()
+    {
+        $stmt = $this->db->query("SELECT DISTINCT categoria as nome FROM lista_alimenti WHERE categoria IS NOT NULL ORDER BY categoria");
+        return $stmt->fetchAll();
+    }
+
+    public function addRestriction($paziente_id, $alimento)
+    {
+        // Cerca ID alimento o crealo se non esiste (se stiamo passando una stringa)
+        // Se $alimento è ID (numeric), usalo direttamente.
+        // Se è stringa (nuovo alimento), logicamente dovremmo gestirlo, ma il frontend manda 'alimento' e 'categoria'.
+
+        // Controlliamo se riceviamo ID o nome
+        if (is_numeric($alimento)) {
+            $alimento_id = $alimento;
+        } else {
+            // Cerca
+            $stmt = $this->db->prepare("SELECT id FROM lista_alimenti WHERE nome = ?");
+            $stmt->execute([$alimento]);
+            $row = $stmt->fetch();
+            if ($row) {
+                $alimento_id = $row['id'];
+            } else {
+                // Crea
+                // Nota: addRestriction nel frontend passava 'categoria' nel POST, ma qui non la vedo nell'argomento.
+                // Modifico addRestriction per accettare categoria opzionale se creo.
+                // Ma per semplicità, se non esiste, lo creo come 'Altro' o cerco di recuperarlo dal POST se possibile?
+                // Meglio: il controller (ajax_handlers) riceve POST['categoria'] e POST['alimento'].
+                // Qui modifico la firma.
+                return false; // See specialized method below
             }
-            
-            $sql .= " ORDER BY categoria, alimento";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':paziente_id' => $paziente_id]);
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Errore recupero alimenti da evitare: " . $e->getMessage());
-            return [];
         }
+
+        $stmt = $this->db->prepare("INSERT INTO alimenti_evitare (paziente_id, lista_alimenti_id) VALUES (?, ?)");
+        return $stmt->execute([$paziente_id, $alimento_id]);
     }
-    
-    /**
-     * Ottiene alimenti raggruppati per categoria
-     */
-    public function getFoodRestrictionsByCategory($paziente_id) {
-        try {
-            $restrictions = $this->getFoodRestrictions($paziente_id);
-            $grouped = [];
-            
-            foreach ($restrictions as $restriction) {
-                $categoria = $restriction['categoria'];
-                if (!isset($grouped[$categoria])) {
-                    $grouped[$categoria] = [];
-                }
-                $grouped[$categoria][] = $restriction;
-            }
-            
-            return $grouped;
-        } catch (Exception $e) {
-            error_log("Errore raggruppamento alimenti: " . $e->getMessage());
-            return [];
+
+    public function addFoodRestriction($paziente_id, $categoria, $nome_alimento)
+    {
+        // Cerca se esiste nella lista globale
+        $stmt = $this->db->prepare("SELECT id FROM lista_alimenti WHERE nome = ?");
+        $stmt->execute([$nome_alimento]);
+        $row = $stmt->fetch();
+
+        if ($row) {
+            $alimento_id = $row['id'];
+        } else {
+            // Crea nuovo alimento in lista
+            $stmt = $this->db->prepare("INSERT INTO lista_alimenti (nome, categoria) VALUES (?, ?)");
+            $stmt->execute([$nome_alimento, $categoria]);
+            $alimento_id = $this->db->lastInsertId();
         }
+
+        // Associa al paziente
+        return $this->addRestriction($paziente_id, $alimento_id);
     }
-    
-    /**
-     * Rimuove (disattiva) un alimento da evitare
-     */
-    public function removeFoodRestriction($id) {
-        try {
-            $sql = "UPDATE alimenti_evitare SET attivo = 0 WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([':id' => $id]);
-        } catch (PDOException $e) {
-            error_log("Errore rimozione alimento: " . $e->getMessage());
-            return false;
-        }
+
+    public function removeRestriction($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM alimenti_evitare WHERE id = ?");
+        return $stmt->execute([$id]);
     }
-    
-    /**
-     * Elimina definitivamente un alimento da evitare
-     */
-    public function deleteFoodRestriction($id) {
-        try {
-            $sql = "DELETE FROM alimenti_evitare WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([':id' => $id]);
-        } catch (PDOException $e) {
-            error_log("Errore eliminazione alimento: " . $e->getMessage());
-            return false;
-        }
+
+    // Alias for removeRestriction if manager calls removeFoodRestriction
+    public function removeFoodRestriction($id)
+    {
+        return $this->removeRestriction($id);
     }
-    
-    /**
-     * Riattiva un alimento precedentemente disattivato
-     */
-    public function reactivateFoodRestriction($id) {
-        try {
-            $sql = "UPDATE alimenti_evitare SET attivo = 1 WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([':id' => $id]);
-        } catch (PDOException $e) {
-            error_log("Errore riattivazione alimento: " . $e->getMessage());
-            return false;
-        }
+
+    public function countRestrictions($paziente_id)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM alimenti_evitare WHERE paziente_id = ? AND attivo = 1");
+        $stmt->execute([$paziente_id]);
+        return $stmt->fetch()['total'];
     }
-    
-    /**
-     * Ottiene tutte le categorie disponibili
-     */
-    public function getAllCategories() {
-        try {
-            $sql = "SELECT * FROM categorie_alimenti ORDER BY ordine, nome";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Errore recupero categorie: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    /**
-     * Aggiunge più alimenti in una volta (utile per import)
-     */
-    public function addMultipleFoodRestrictions($paziente_id, $foods) {
-        try {
-            $this->db->beginTransaction();
-            
-            $sql = "INSERT INTO alimenti_evitare (paziente_id, categoria, alimento) 
-                    VALUES (:paziente_id, :categoria, :alimento)";
-            $stmt = $this->db->prepare($sql);
-            
-            foreach ($foods as $food) {
-                $stmt->execute([
-                    ':paziente_id' => $paziente_id,
-                    ':categoria' => $food['categoria'],
-                    ':alimento' => $food['alimento']
-                ]);
-            }
-            
-            $this->db->commit();
-            return true;
-        } catch (PDOException $e) {
-            $this->db->rollBack();
-            error_log("Errore aggiunta multipla alimenti: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    /**
-     * Conta gli alimenti da evitare per un paziente
-     */
-    public function countFoodRestrictions($paziente_id, $only_active = true) {
-        try {
-            $sql = "SELECT COUNT(*) as total FROM alimenti_evitare 
-                    WHERE paziente_id = :paziente_id";
-            
-            if ($only_active) {
-                $sql .= " AND attivo = 1";
-            }
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([':paziente_id' => $paziente_id]);
-            $result = $stmt->fetch();
-            return $result['total'];
-        } catch (PDOException $e) {
-            error_log("Errore conteggio alimenti: " . $e->getMessage());
-            return 0;
-        }
+
+    public function countFoodRestrictions($paziente_id)
+    {
+        return $this->countRestrictions($paziente_id);
     }
 }

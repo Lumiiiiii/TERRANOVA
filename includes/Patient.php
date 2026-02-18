@@ -1,47 +1,47 @@
 <?php
 /**
  * Classe Patient - Gestione pazienti
+ * Semplificata per il nuovo schema DB
  */
 
 require_once __DIR__ . '/../config/database.php';
 
-class Patient {
+class Patient
+{
     private $db;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->db = getDB();
     }
-    
-    /**
-     * Crea un nuovo paziente
-     */
-    public function createPatient($data) {
+
+    // Crea nuovo paziente
+    public function createPatient($data)
+    {
         try {
-            $sql = "INSERT INTO pazienti (nome_cognome, sesso, data_nascita, indirizzo, telefono, email, professione) 
-                    VALUES (:nome_cognome, :sesso, :data_nascita, :indirizzo, :telefono, :email, :professione)";
-            
+            $sql = "INSERT INTO pazienti (nome_cognome, data_nascita, telefono, indirizzo, email, professione) 
+                    VALUES (:nome_cognome, :data_nascita, :telefono, :indirizzo, :email, :professione)";
+
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 ':nome_cognome' => $data['nome_cognome'],
-                ':sesso' => $data['sesso'] ?? null,
-                ':data_nascita' => $data['data_nascita'] ?? null,
-                ':indirizzo' => $data['indirizzo'] ?? null,
+                ':data_nascita' => !empty($data['data_nascita']) ? $data['data_nascita'] : null,
                 ':telefono' => $data['telefono'] ?? null,
+                ':indirizzo' => $data['indirizzo'] ?? null,
                 ':email' => $data['email'] ?? null,
                 ':professione' => $data['professione'] ?? null
             ]);
-            
+
             return $this->db->lastInsertId();
         } catch (PDOException $e) {
-            error_log("Errore creazione paziente: " . $e->getMessage());
+            error_log("Errore crea paziente: " . $e->getMessage());
             return false;
         }
     }
-    
-    /**
-     * Ottiene i dati di un paziente
-     */
-    public function getPatient($id) {
+
+    // Ottieni dati paziente
+    public function getPatient($id)
+    {
         try {
             $sql = "SELECT *, TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta 
                     FROM pazienti WHERE id = :id";
@@ -49,143 +49,84 @@ class Patient {
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         } catch (PDOException $e) {
-            error_log("Errore recupero paziente: " . $e->getMessage());
             return false;
         }
     }
-    
-    /**
-     * Aggiorna i dati di un paziente
-     */
-    public function updatePatient($id, $data) {
+
+    // Aggiorna dati paziente
+    public function updatePatient($id, $data)
+    {
         try {
             $sql = "UPDATE pazienti 
                     SET nome_cognome = :nome_cognome,
-                        sesso = :sesso,
                         data_nascita = :data_nascita,
-                        indirizzo = :indirizzo,
                         telefono = :telefono,
+                        indirizzo = :indirizzo,
                         email = :email,
                         professione = :professione
                     WHERE id = :id";
-            
+
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
                 ':id' => $id,
                 ':nome_cognome' => $data['nome_cognome'],
-                ':sesso' => $data['sesso'] ?? null,
-                ':data_nascita' => $data['data_nascita'] ?? null,
-                ':indirizzo' => $data['indirizzo'] ?? null,
+                ':data_nascita' => !empty($data['data_nascita']) ? $data['data_nascita'] : null,
                 ':telefono' => $data['telefono'] ?? null,
+                ':indirizzo' => $data['indirizzo'] ?? null,
                 ':email' => $data['email'] ?? null,
                 ':professione' => $data['professione'] ?? null
             ]);
         } catch (PDOException $e) {
-            error_log("Errore aggiornamento paziente: " . $e->getMessage());
             return false;
         }
     }
-    
-    /**
-     * Elimina un paziente
-     */
-    public function deletePatient($id) {
+
+    // Elimina paziente
+    public function deletePatient($id)
+    {
         try {
-            $sql = "DELETE FROM pazienti WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->db->prepare("DELETE FROM pazienti WHERE id = :id");
             return $stmt->execute([':id' => $id]);
         } catch (PDOException $e) {
-            error_log("Errore eliminazione paziente: " . $e->getMessage());
             return false;
         }
     }
-    
-    /**
-     * Ottiene tutti i pazienti
-     */
-    public function getAllPatients($limit = 100, $offset = 0) {
+
+    // Lista pazienti recenti
+    public function getRecentPatients($limit = 10)
+    {
         try {
-            $sql = "SELECT id, nome_cognome, sesso, data_nascita, telefono, email, 
-                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta,
-                           data_creazione
+            $sql = "SELECT *, TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta 
                     FROM pazienti 
-                    ORDER BY nome_cognome ASC
-                    LIMIT :limit OFFSET :offset";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Errore recupero pazienti: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    /**
-     * Ricerca pazienti per nome
-     */
-    public function searchPatients($query) {
-        try {
-            $query = trim($query);
-            $sql = "SELECT id, nome_cognome, sesso, data_nascita, telefono, email,
-                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta
-                    FROM pazienti 
-                    WHERE nome_cognome LIKE :q1 
-                       OR telefono LIKE :q2
-                       OR email LIKE :q3
-                    ORDER BY nome_cognome ASC
-                    LIMIT 50";
-            
-            $stmt = $this->db->prepare($sql);
-            $searchTerm = '%' . $query . '%';
-            $stmt->execute([
-                ':q1' => $searchTerm,
-                ':q2' => $searchTerm,
-                ':q3' => $searchTerm
-            ]);
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Errore ricerca pazienti: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    /**
-     * Conta il numero totale di pazienti
-     */
-    public function countPatients() {
-        try {
-            $sql = "SELECT COUNT(*) as total FROM pazienti";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch();
-            return $result['total'];
-        } catch (PDOException $e) {
-            error_log("Errore conteggio pazienti: " . $e->getMessage());
-            return 0;
-        }
-    }
-    
-    /**
-     * Ottiene i pazienti recenti (ultimi 10)
-     */
-    public function getRecentPatients($limit = 10) {
-        try {
-            $sql = "SELECT id, nome_cognome, data_nascita, telefono, email,
-                           TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta,
-                           data_creazione
-                    FROM pazienti 
-                    ORDER BY data_creazione DESC
+                    ORDER BY data_creazione DESC 
                     LIMIT :limit";
-            
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Errore recupero pazienti recenti: " . $e->getMessage());
             return [];
         }
+    }
+
+    // Conta totale
+    public function countPatients()
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) as total FROM pazienti");
+        return $stmt->fetch()['total'];
+    }
+
+    // Cerca pazienti (semplificato)
+    public function searchPatients($query)
+    {
+        $term = "%$query%";
+        $sql = "SELECT *, TIMESTAMPDIFF(YEAR, data_nascita, CURDATE()) AS eta 
+                FROM pazienti 
+                WHERE nome_cognome LIKE ? OR telefono LIKE ? OR email LIKE ?
+                LIMIT 20";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$term, $term, $term]);
+        return $stmt->fetchAll();
     }
 }
+
