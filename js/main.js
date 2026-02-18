@@ -11,8 +11,13 @@ function showMessage(message, type = 'success') {
     alertDiv.className = `alert alert-${type}`;
     alertDiv.textContent = message;
 
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
+    const container = document.querySelector('.container') || document.querySelector('div[class*="max-w-"]') || document.body;
+    if (container) {
+        container.insertBefore(alertDiv, container.firstChild);
+    } else {
+        console.error('Container not found for message:', message);
+        alert(message); // Fallback
+    }
 
     setTimeout(() => {
         alertDiv.remove();
