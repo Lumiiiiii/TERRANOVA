@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    header('Location: login.php');
+    exit;
+}
 /**
  * Dettaglio Paziente - Refactored
  */
@@ -57,7 +62,8 @@ $visits = $visitManager->getVisitHistory($id);
                     </div>
                     <h2 class="text-xl font-bold"><?= htmlspecialchars($patient['nome_cognome']) ?></h2>
                     <p class="text-gray-500 text-sm mb-4">
-                        <?= htmlspecialchars($patient['professione'] ?? 'Professione non indicata') ?></p>
+                        <?= htmlspecialchars($patient['professione'] ?? 'Professione non indicata') ?>
+                    </p>
 
                     <a href="visita_anamnesi.php?paziente_id=<?= $id ?>"
                         class="inline-block bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
@@ -101,9 +107,11 @@ $visits = $visitManager->getVisitHistory($id);
                                     class="bg-white/50 p-4 rounded-xl border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow">
                                     <div>
                                         <h4 class="font-bold text-gray-800">Visita del
-                                            <?= date('d/m/Y', strtotime($v['data_visita'])) ?></h4>
+                                            <?= date('d/m/Y', strtotime($v['data_visita'])) ?>
+                                        </h4>
                                         <p class="text-xs text-gray-500 truncate max-w-md">
-                                            <?= htmlspecialchars($v['note_finali'] ?? '') ?></p>
+                                            <?= htmlspecialchars($v['note_finali'] ?? '') ?>
+                                        </p>
                                     </div>
                                     <div class="flex gap-2">
                                         <a href="visita_anamnesi.php?visita_id=<?= $v['id'] ?>&paziente_id=<?= $id ?>"

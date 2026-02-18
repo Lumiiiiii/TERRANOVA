@@ -1,10 +1,19 @@
 <?php
+session_start();
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    header('Location: login.php');
+    exit;
+}
 /**
  * Homepage - Dashboard principale (Tailwind + Bento Grid Redesign)
  */
-require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/includes/Patient.php';
+// Includiamo il file con le istruzioni necessarie a collegare il database
+include __DIR__ . '/config/database.php';
 
+// "Patient.php" è una classe con tutti i metodi del paziente
+include __DIR__ . '/includes/Patient.php';
+
+// $patientManager è utilizzato come "gestore" delle funzioni della classe Patient
 $patientManager = new Patient();
 $recentPatients = $patientManager->getRecentPatients(10);
 $totalPatients = $patientManager->countPatients();
@@ -195,7 +204,8 @@ $totalPatients = $patientManager->countPatients();
                                     </div>
                                     <div>
                                         <h4 class="font-semibold text-gray-800">
-                                            <?= htmlspecialchars($patient['nome_cognome']) ?></h4>
+                                            <?= htmlspecialchars($patient['nome_cognome']) ?>
+                                        </h4>
                                         <p class="text-xs text-gray-500">
                                             <?= $patient['eta'] ? $patient['eta'] . ' anni' : '' ?>
                                             <?= $patient['telefono'] ? ' • ' . htmlspecialchars($patient['telefono']) : '' ?>
