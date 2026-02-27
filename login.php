@@ -26,42 +26,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TerraNova</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
-        <div class="text-center mb-6">
-            <div
-                class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 380px;">
+        <div class="text-center mb-4">
+            <div class="avatar-circle-lg mx-auto mb-3 bg-primary text-white" style="background-color: var(--color-primary) !important; color: white !important;">
                 TN
             </div>
-            <h1 class="text-2xl font-bold text-gray-800">TerraNova</h1>
-            <p class="text-gray-500 text-sm">Accesso riservato</p>
+            <h1 class="h3 fw-bold mb-0">TerraNova</h1>
+            <p class="text-muted small">Accesso riservato</p>
         </div>
 
         <?php if ($error): ?>
-            <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-center text-sm">
+            <div class="alert alert-danger text-center small py-2">
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
 
         <form method="POST">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                <input type="password" name="password" required autofocus
-                    class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-colors"
-                    placeholder="Inserisci password...">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Password</label>
+                <input type="password" name="password" class="form-control form-control-lg"
+                    placeholder="Inserisci password..." required autofocus>
             </div>
-
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md">
+            <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold">
                 Entra
             </button>
         </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

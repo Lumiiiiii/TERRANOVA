@@ -5,7 +5,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit;
 }
 /**
- * Dettaglio Paziente - Refactored
+ * Dettaglio Paziente - Bootstrap 5
  */
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/Patient.php';
@@ -31,93 +31,94 @@ $visits = $visitManager->getVisitHistory($id);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($patient['nome_cognome']) ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title><?= htmlspecialchars($patient['nome_cognome']) ?> - TerraNova</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script>
-        tailwind.config = { theme: { extend: { colors: { primary: '#2d8659', secondary: '#f4a261' } } } }
-    </script>
 </head>
 
-<body class="bg-gray-50 min-h-screen text-gray-800">
-    <nav class="sticky top-0 z-50 glass px-6 py-4 mb-8">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <a href="index.php"
-                    class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-green-400 flex items-center justify-center text-white font-bold">TN</a>
-                <h1 class="text-sm font-bold"><?= htmlspecialchars($patient['nome_cognome']) ?></h1>
-            </div>
-            <a href="index.php" class="text-sm font-medium text-gray-600 hover:text-primary">Dashboard</a>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light glass sticky-top px-3 py-2">
+        <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="index.php">
+                <div class="avatar-circle"
+                    style="background-color:var(--color-primary); color:white; font-size:.85rem;">TN</div>
+                <?= htmlspecialchars($patient['nome_cognome']) ?>
+            </a>
+            <a href="index.php" class="btn btn-outline-secondary btn-sm">Dashboard</a>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 pb-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left: Profile -->
-            <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-6 text-center relative overflow-hidden">
-                    <div
-                        class="w-20 h-20 rounded-full bg-gray-100 mx-auto flex items-center justify-center text-2xl font-bold text-primary mb-4">
+    <div class="container-xl py-4">
+        <div class="row g-4">
+
+            <!-- Colonna Sinistra: Profilo -->
+            <div class="col-lg-4">
+                <div class="card glass-card border-0 text-center animate-fade-in">
+                    <div class="avatar-circle-lg mx-auto mb-3">
                         <?= strtoupper(substr($patient['nome_cognome'], 0, 1)) ?>
                     </div>
-                    <h2 class="text-xl font-bold"><?= htmlspecialchars($patient['nome_cognome']) ?></h2>
-                    <p class="text-gray-500 text-sm mb-4">
+                    <h2 class="h5 fw-bold"><?= htmlspecialchars($patient['nome_cognome']) ?></h2>
+                    <p class="text-muted small mb-3">
                         <?= htmlspecialchars($patient['professione'] ?? 'Professione non indicata') ?>
                     </p>
 
-                    <a href="visita_anamnesi.php?paziente_id=<?= $id ?>"
-                        class="inline-block bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                        + Nuova Visita
-                    </a>
+                    <a href="visita_anamnesi.php?paziente_id=<?= $id ?>" class="btn btn-primary btn-sm mb-4">+ Nuova
+                        Visita</a>
 
-                    <div class="mt-6 text-left space-y-3 text-sm border-t pt-4">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Età</span>
-                            <span class="font-medium"><?= $patient['eta'] ?? '-' ?> anni</span>
+                    <hr>
+                    <div class="text-start small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Età</span>
+                            <span class="fw-semibold"><?= $patient['eta'] ?? '-' ?> anni</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Telefono</span>
-                            <span class="font-medium"><?= htmlspecialchars($patient['telefono'] ?? '-') ?></span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Telefono</span>
+                            <span class="fw-semibold"><?= htmlspecialchars($patient['telefono'] ?? '-') ?></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Email</span>
-                            <span class="font-medium"><?= htmlspecialchars($patient['email'] ?? '-') ?></span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Email</span>
+                            <span class="fw-semibold"><?= htmlspecialchars($patient['email'] ?? '-') ?></span>
                         </div>
-                        <div>
-                            <span class="text-gray-500 block text-xs uppercase mb-1">Indirizzo</span>
-                            <span class="font-medium block"><?= htmlspecialchars($patient['indirizzo'] ?? '-') ?></span>
+                        <div class="mt-2">
+                            <span class="text-muted d-block"
+                                style="font-size:.75rem; text-transform:uppercase; letter-spacing:.05em;">Indirizzo</span>
+                            <span class="fw-semibold"><?= htmlspecialchars($patient['indirizzo'] ?? '-') ?></span>
                         </div>
                     </div>
-                    <button onclick="document.getElementById('edit-modal').classList.remove('hidden')"
-                        class="mt-4 text-xs text-gray-400 hover:text-primary underline">Modifica Dati</button>
+
+                    <button class="btn btn-link btn-sm text-muted mt-3 p-0" data-bs-toggle="modal"
+                        data-bs-target="#editModal">
+                        Modifica Dati
+                    </button>
                 </div>
             </div>
 
-            <!-- Right: Visits -->
-            <div class="lg:col-span-8 space-y-6">
-                <!-- History -->
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-lg mb-6 border-b pb-2">Storico Visite</h3>
+            <!-- Colonna Destra: Storico Visite -->
+            <div class="col-lg-8">
+                <div class="card glass-card border-0 animate-fade-in delay-100">
+                    <h3 class="h5 fw-bold border-bottom pb-2 mb-4">Storico Visite</h3>
+
                     <?php if (empty($visits)): ?>
-                        <p class="text-gray-500 text-center py-8">Nessuna visita registrata.</p>
+                        <p class="text-muted text-center py-4">Nessuna visita registrata.</p>
                     <?php else: ?>
-                        <div class="space-y-4">
+                        <div class="d-flex flex-column gap-3">
                             <?php foreach ($visits as $v): ?>
                                 <div
-                                    class="bg-white/50 p-4 rounded-xl border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow">
+                                    class="card border rounded-3 p-3 d-flex flex-row justify-content-between align-items-center">
                                     <div>
-                                        <h4 class="font-bold text-gray-800">Visita del
-                                            <?= date('d/m/Y', strtotime($v['data_visita'])) ?>
-                                        </h4>
-                                        <p class="text-xs text-gray-500 truncate max-w-md">
+                                        <h6 class="fw-bold mb-1">
+                                            Visita del <?= date('d/m/Y', strtotime($v['data_visita'])) ?>
+                                        </h6>
+                                        <p class="text-muted small mb-0"
+                                            style="max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                             <?= htmlspecialchars($v['note_finali'] ?? '') ?>
                                         </p>
                                     </div>
-                                    <div class="flex gap-2">
-                                        <a href="visita_anamnesi.php?visita_id=<?= $v['id'] ?>&paziente_id=<?= $id ?>"
-                                            class="px-3 py-1 text-xs bg-primary text-white rounded hover:bg-green-700">Vedi /
-                                            Modifica</a>
-                                    </div>
+                                    <a href="visita_anamnesi.php?visita_id=<?= $v['id'] ?>&paziente_id=<?= $id ?>"
+                                        class="btn btn-primary btn-sm ms-3 text-nowrap">
+                                        Vedi / Modifica
+                                    </a>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -127,40 +128,64 @@ $visits = $visitManager->getVisitHistory($id);
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 class="font-bold text-lg mb-4">Modifica Paziente</h3>
-            <form id="edit-form" class="space-y-4">
-                <input type="hidden" name="action" value="update_patient">
-                <input type="hidden" name="id" value="<?= $id ?>">
-                <input type="text" name="nome_cognome" placeholder="Nome"
-                    value="<?= htmlspecialchars($patient['nome_cognome']) ?>" class="w-full border rounded p-2 text-sm">
-                <input type="date" name="data_nascita" value="<?= $patient['data_nascita'] ?>"
-                    class="w-full border rounded p-2 text-sm">
-                <input type="tel" name="telefono" placeholder="Telefono"
-                    value="<?= htmlspecialchars($patient['telefono'] ?? '') ?>"
-                    class="w-full border rounded p-2 text-sm">
-                <input type="email" name="email" placeholder="Email"
-                    value="<?= htmlspecialchars($patient['email'] ?? '') ?>" class="w-full border rounded p-2 text-sm">
-                <input type="text" name="professione" placeholder="Professione"
-                    value="<?= htmlspecialchars($patient['professione'] ?? '') ?>"
-                    class="w-full border rounded p-2 text-sm">
-                <textarea name="indirizzo" placeholder="Indirizzo"
-                    class="w-full border rounded p-2 text-sm"><?= htmlspecialchars($patient['indirizzo'] ?? '') ?></textarea>
-                <div class="flex gap-2 justify-end">
-                    <button type="button" onclick="document.getElementById('edit-modal').classList.add('hidden')"
-                        class="px-4 py-2 bg-gray-200 rounded text-sm">Annulla</button>
-                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded text-sm">Salva</button>
+    <!-- Modal Modifica -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Modifica Paziente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </form>
+                <div class="modal-body">
+                    <form id="edit-form">
+                        <input type="hidden" name="action" value="update_patient">
+                        <input type="hidden" name="id" value="<?= $id ?>">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome e Cognome</label>
+                            <input type="text" name="nome_cognome" class="form-control"
+                                value="<?= htmlspecialchars($patient['nome_cognome']) ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Data di Nascita</label>
+                            <input type="date" name="data_nascita" class="form-control"
+                                value="<?= $patient['data_nascita'] ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Telefono</label>
+                            <input type="tel" name="telefono" class="form-control"
+                                value="<?= htmlspecialchars($patient['telefono'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control"
+                                value="<?= htmlspecialchars($patient['email'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Professione</label>
+                            <input type="text" name="professione" class="form-control"
+                                value="<?= htmlspecialchars($patient['professione'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Indirizzo</label>
+                            <textarea name="indirizzo"
+                                class="form-control"><?= htmlspecialchars($patient['indirizzo'] ?? '') ?></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="save-edit-btn">Salva</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('edit-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        document.getElementById('save-edit-btn').addEventListener('click', async function () {
+            const form = document.getElementById('edit-form');
+            const formData = new FormData(form);
             try {
                 const res = await fetch('ajax_handlers.php', { method: 'POST', body: formData });
                 const data = await res.json();
